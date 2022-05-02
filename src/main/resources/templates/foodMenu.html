@@ -1,0 +1,13 @@
+<div th:fragment="Main">
+    <select v-model="viewModel.currentCategory" v-on:change="fireUpdate('selectCategory')">
+        <option v-for="v in viewModel.categories" v-bind:value="v">{{v}}</option>
+    </select><br/>
+    <select v-model="viewModel.currentFood">
+        <option v-for="v in viewModel.foods" v-bind:value="v">{{v}}</option>
+    </select><br/>
+    <button v-on:click="fireUpdate('addFood')">Add</button>
+    <hr/>
+    <ul>
+        <li v-for="v in viewModel.ordered">{{v}}</li>
+    </ul>
+</div>
