@@ -39,4 +39,9 @@ public @interface View {
      * @return 
      */
     String layout() default "layouts/Basic";
+    /**
+     * the class handling this page
+     * @return 
+     */
+    Class pageClass();
 }

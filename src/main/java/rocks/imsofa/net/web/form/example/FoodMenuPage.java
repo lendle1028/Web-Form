@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.RestController;
-import rocks.imsofa.net.web.form.AbstractPageController;
-import rocks.imsofa.net.web.form.View;
+import rocks.imsofa.net.web.form.Page;
 import rocks.imsofa.net.web.form.ViewContext;
 import rocks.imsofa.net.web.form.ViewEvent;
 
@@ -18,9 +16,7 @@ import rocks.imsofa.net.web.form.ViewEvent;
  *
  * @author lendle
  */
-@RestController
-@View(paths={"/foodMenu"}, view="foodMenu", pageClass = FoodMenuPage.class)
-public class FoodMenuPageController extends AbstractPageController<FoodMenuViewModel>{
+public class FoodMenuPage implements Page<FoodMenuViewModel>{
     private Map<String, String> foods=Map.of(
             "吉士堡", "漢堡",
             "香雞堡", "漢堡",
@@ -33,13 +29,23 @@ public class FoodMenuPageController extends AbstractPageController<FoodMenuViewM
             "冰淇淋", "點心"
     );
     @Override
-    protected FoodMenuViewModel initViewModel(HttpServletRequest request, Map pathVariables) {
+    public FoodMenuViewModel init(HttpServletRequest request, Map pathVariables) {
         FoodMenuViewModel foodMenuViewModel=new FoodMenuViewModel();
         foodMenuViewModel.setCategories(List.of("漢堡", "飲料", "點心"));
         foodMenuViewModel.setCurrentCategory("漢堡");
         foodMenuViewModel.setFoods(getFoods("漢堡"));
         foodMenuViewModel.setCurrentFood(foodMenuViewModel.getFoods().get(0));
         return foodMenuViewModel;
+    }
+    
+    private List<String> getFoods(String category){
+        List<String> food=new ArrayList<>();
+        for(String key : foods.keySet()){
+            if(category.equals(foods.get(key))){
+                food.add(key);
+            }
+        }
+        return food;
     }
     
     @ViewEvent("selectCategory")
@@ -55,15 +61,5 @@ public class FoodMenuPageController extends AbstractPageController<FoodMenuViewM
         FoodMenuViewModel foodMenuViewModel=viewContext.getViewModel();
         foodMenuViewModel.getOrdered().add(foodMenuViewModel.getCurrentFood());
         return foodMenuViewModel;
-    }
-    
-    private List<String> getFoods(String category){
-        List<String> food=new ArrayList<>();
-        for(String key : foods.keySet()){
-            if(category.equals(foods.get(key))){
-                food.add(key);
-            }
-        }
-        return food;
     }
 }

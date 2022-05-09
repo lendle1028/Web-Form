@@ -33,6 +33,7 @@ public abstract class AbstractPageController<T> {
     private String path=null;
     private String pageTemplate;
     private String layout=null;
+    private Class pageClass=null;
     @PostConstruct
     protected void init() {
         try {
@@ -43,6 +44,8 @@ public abstract class AbstractPageController<T> {
             }
             layout=pageAnnotation.layout();
             path=pageAnnotation.paths()[0];
+            pageClass=pageAnnotation.pageClass();
+            
             RequestMappingInfo mappingInfo = RequestMappingInfo.paths(pageAnnotation.paths()).methods(RequestMethod.GET).build();
             Method method = this.getClass().getMethod("indexAction", HttpServletRequest.class);
             requestMappingHandlerMapping.registerMapping(mappingInfo, this, method);
@@ -68,13 +71,36 @@ public abstract class AbstractPageController<T> {
     
     public ModelAndView indexAction(HttpServletRequest request){
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        T viewModel=this.initViewModel(request, pathVariables);
+        Page<T> page=this.createPageInstance(request);
+//        T viewModel=this.initViewModel(request, pathVariables);
+        T viewModel=page.init(request, pathVariables);
         Map model=Map.of("viewModel", viewModel, "pageTemplate", pageTemplate, "path", path);
         return new ModelAndView(layout, model);
     }
     
+    protected Page createPageInstance(HttpServletRequest request){
+        try {
+            Page page=(Page) this.pageClass.getDeclaredConstructor().newInstance();
+            return page;
+        } catch (NoSuchMethodException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     public T fireUpdateEvent(HttpServletRequest request, HttpServletResponse response, @RequestBody ViewEventArg<T> arg){
-        Method [] methods=this.getClass().getDeclaredMethods();
+        Page<T> page=this.createPageInstance(request);
+        Method [] methods=page.getClass().getDeclaredMethods();
         for(Method method : methods){
             ViewEvent handler=method.getAnnotation(ViewEvent.class);
             if(handler!=null && handler.value().equals(arg.getName())){
@@ -83,7 +109,7 @@ public abstract class AbstractPageController<T> {
                     viewContext.setRequest(request);
                     viewContext.setResponse(response);
                     viewContext.setViewModel(arg.getViewModel());
-                    T viewModel=(T) method.invoke(this, viewContext);
+                    T viewModel=(T) method.invoke(page, viewContext);
                     return viewModel;
                 } catch (IllegalAccessException ex) {
                     Logger.getLogger(AbstractPageController.class.getName()).log(Level.SEVERE, null, ex);
