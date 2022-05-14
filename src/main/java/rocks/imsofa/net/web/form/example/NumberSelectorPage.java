@@ -33,5 +33,5 @@ public class NumberSelectorPage implements Page<NumberSelectorViewModel>{
         model.setSelectedSecondValue(model.getStartValue());
         return model;
     }
-    
+
 }

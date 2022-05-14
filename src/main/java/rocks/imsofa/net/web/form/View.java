@@ -44,4 +44,10 @@ public @interface View {
      * @return 
      */
     Class pageClass();
+    /**
+     * the scope of the page instance
+     * default to request
+     * @return 
+     */
+    Scope scope() default Scope.REQUEST;
 }

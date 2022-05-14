@@ -62,4 +62,5 @@ public class FoodMenuPage implements Page<FoodMenuViewModel>{
         foodMenuViewModel.getOrdered().add(foodMenuViewModel.getCurrentFood());
         return foodMenuViewModel;
     }
+
 }
