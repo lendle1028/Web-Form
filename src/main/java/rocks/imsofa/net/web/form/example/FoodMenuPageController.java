@@ -32,15 +32,6 @@ public class FoodMenuPageController extends AbstractPageController<FoodMenuViewM
             "雞塊", "點心",
             "冰淇淋", "點心"
     );
-    @Override
-    protected FoodMenuViewModel initViewModel(HttpServletRequest request, Map pathVariables) {
-        FoodMenuViewModel foodMenuViewModel=new FoodMenuViewModel();
-        foodMenuViewModel.setCategories(List.of("漢堡", "飲料", "點心"));
-        foodMenuViewModel.setCurrentCategory("漢堡");
-        foodMenuViewModel.setFoods(getFoods("漢堡"));
-        foodMenuViewModel.setCurrentFood(foodMenuViewModel.getFoods().get(0));
-        return foodMenuViewModel;
-    }
     
     @ViewEvent("selectCategory")
     public FoodMenuViewModel selectCategory(ViewContext<FoodMenuViewModel> viewContext){

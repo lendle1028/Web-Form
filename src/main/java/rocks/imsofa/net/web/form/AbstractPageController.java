@@ -66,16 +66,6 @@ public abstract class AbstractPageController<T> {
         }
     }
 
-    /**
-     * create the initial view model
-     *
-     * @param request
-     * @param pathVariables the mapping comes from the paths arguments of the
-     * @View annotation
-     * @return
-     */
-    protected abstract T initViewModel(HttpServletRequest request, Map pathVariables);
-
     public ModelAndView indexAction(HttpServletRequest request) {
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Page<T> page = this.createPageInstance(request);
