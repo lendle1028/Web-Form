@@ -21,12 +21,4 @@ import rocks.imsofa.net.web.form.ViewEvent;
 @View(paths={"/numberSelector"}, view="/numberSelector", pageClass = NumberSelectorPage.class)
 public class NumberSelectorPageController extends AbstractPageController<NumberSelectorViewModel>{
     
-    @ViewEvent("startValueUpdated")
-    public NumberSelectorViewModel update(ViewContext<NumberSelectorViewModel> viewContext){
-        NumberSelectorViewModel model=viewContext.getViewModel();
-        model.setSequentialValues(List.of(model.getStartValue(), model.getStartValue()+1, model.getStartValue()+2, model.getStartValue()+3, model.getStartValue()+4));
-        model.setSelectedSecondValue(model.getStartValue());
-        return model;
-    }
-    
 }
